@@ -1,26 +1,60 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import ValidationComponent from "./ValidationComponent/ValidationComponent";
+import CharComponent from "./CharComponent/CharComponent";
+
+class App extends Component {
+  state = {
+    lengthOfText: 0,
+    text: ""
+  };
+
+  removeCharHandler = charIndex => {
+    const textArray = [...this.state.text];
+    textArray.splice(charIndex, 1);
+    this.setState({ text: textArray.join("") });
+  };
+
+  inputChangeHandler = event => {
+    const newLength = event.target.value.length;
+    const newValue = event.target.value;
+    //console.log(newLength);
+    this.setState({ lengthOfText: newLength, text: newValue });
+  };
+
+  render() {
+    let listOfCharComponents = null;
+
+    if (this.state.text) {
+      const textArray = this.state.text.split("");
+      listOfCharComponents = (
+        <div>
+          {textArray.map((char, index) => {
+            return (
+              <CharComponent
+                key={index}
+                content={char}
+                removeChar={() => this.removeCharHandler(index)}
+              />
+            );
+          })}
+        </div>
+      );
+    }
+    return (
+      <div>
+        <input
+          value={this.state.text}
+          type="text"
+          onChange={event => this.inputChangeHandler(event)}
+        />
+        <p>{this.state.lengthOfText}</p>
+        <ValidationComponent paragraphLength={this.state.lengthOfText} />
+        {listOfCharComponents}
+      </div>
+    );
+  }
 }
 
 export default App;
